@@ -1,0 +1,99 @@
+<% content_for :title, "#{@user.display_name} — Admin — LetsMeet" %>
+
+<div style="margin-bottom: 20px;">
+  <%= link_to "← Back to Members", admin_users_path, class: "text-muted", style: "font-size: 14px;" %>
+</div>
+
+<div class="page-header flex justify-between items-center">
+  <div>
+    <h1><%= @user.display_name %></h1>
+    <p class="text-muted"><%= @user.email %></p>
+  </div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+    <% if @user.role_member? %>
+      <%= link_to "Grant Admin", grant_admin_admin_user_path(@user), data: { turbo_method: :patch, confirm: "Make this user an admin?" }, class: "btn btn-primary btn-sm" %>
+    <% else %>
+      <%= link_to "Revoke Admin", revoke_admin_admin_user_path(@user), data: { turbo_method: :patch, confirm: "Remove admin privileges?" }, class: "btn btn-danger btn-sm" %>
+    <% end %>
+    <%= link_to "Delete Member", admin_user_path(@user), data: { turbo_method: :delete, confirm: "Permanently delete #{@user.display_name}?" }, class: "btn btn-danger btn-sm" %>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div>
+    <div class="card" style="margin-bottom: 24px;">
+      <div class="card-title">Member Details</div>
+      <table class="table">
+        <tr><th>Email</th><td><%= @user.email %></td></tr>
+        <tr><th>Role</th><td><span class="badge <%= @user.role_admin? ? 'badge-gold' : 'badge-gray' %>"><%= @user.role.humanize %></span></td></tr>
+        <tr><th>Confirmed</th><td><%= @user.confirmed? ? "<span class='badge badge-green'>Yes</span>".html_safe : "<span class='badge badge-red'>No</span>".html_safe %></td></tr>
+        <tr><th>Joined</th><td><%= @user.created_at.strftime("%B %-d, %Y") %></td></tr>
+        <tr><th>Sign-ins</th><td><%= @user.sign_in_count %></td></tr>
+        <tr><th>Last Sign-in</th><td><%= @user.last_sign_in_at&.strftime("%b %-d, %Y") || "Never" %></td></tr>
+        <tr><th>Invited By</th><td><%= @user.invited_by&.display_name || "Founder / Seeded" %></td></tr>
+        <tr><th>Referral Code Used</th><td><%= @user.referral_code_used || "N/A" %></td></tr>
+      </table>
+    </div>
+
+    <%# Mint referral code form %>
+    <div class="card">
+      <div class="card-title">Mint Referral Code</div>
+      <%= form_with url: mint_referral_code_admin_user_path(@user), method: :post do |f| %>
+        <div class="form-group">
+          <label class="form-label">Max Uses</label>
+          <input type="number" name="max_uses" value="1" min="1" class="form-control" style="max-width: 120px;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Expires At (optional)</label>
+          <input type="datetime-local" name="expires_at" class="form-control">
+        </div>
+        <%= f.submit "Mint Code", class: "btn btn-primary btn-sm" %>
+      <% end %>
+    </div>
+  </div>
+
+  <div>
+    <%# Referral Codes %>
+    <div class="card" style="margin-bottom: 24px;">
+      <div class="card-title">Referral Codes (<%= @user.referral_codes.count %>)</div>
+      <% if @user.referral_codes.any? %>
+        <table class="table">
+          <thead><tr><th>Token</th><th>Uses</th><th>Active</th><th>Expires</th></tr></thead>
+          <tbody>
+            <% @user.referral_codes.order(created_at: :desc).each do |code| %>
+              <tr>
+                <td><code style="color: var(--lm-gold); font-size: 13px;"><%= code.token %></code></td>
+                <td><%= code.uses_count %>/<%= code.max_uses %></td>
+                <td><span class="badge <%= code.active? ? 'badge-green' : 'badge-gray' %>"><%= code.active? ? "Active" : "Inactive" %></span></td>
+                <td style="font-size: 13px; color: var(--lm-muted);"><%= code.expires_at&.strftime("%b %-d, %Y") || "—" %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <p class="text-muted">No referral codes issued.</p>
+      <% end %>
+    </div>
+
+    <%# Invitations %>
+    <div class="card">
+      <div class="card-title">Invitations Sent (<%= @user.sent_invitations.count %>)</div>
+      <% if @user.sent_invitations.any? %>
+        <table class="table">
+          <thead><tr><th>Recipient</th><th>Status</th><th>Sent</th></tr></thead>
+          <tbody>
+            <% @user.sent_invitations.order(created_at: :desc).limit(10).each do |inv| %>
+              <tr>
+                <td style="font-size: 13px;"><%= inv.recipient_email %></td>
+                <td><span class="badge <%= inv.accepted? ? 'badge-green' : inv.revoked? ? 'badge-red' : 'badge-gold' %>"><%= inv.status.humanize %></span></td>
+                <td style="font-size: 13px; color: var(--lm-muted);"><%= inv.created_at.strftime("%b %-d") %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <p class="text-muted">No invitations sent.</p>
+      <% end %>
+    </div>
+  </div>
+</div>

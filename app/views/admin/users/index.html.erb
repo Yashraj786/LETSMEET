@@ -1,0 +1,44 @@
+<% content_for :title, "Members — Admin — LetsMeet" %>
+
+<div class="page-header">
+  <h1>Members</h1>
+  <p>Full member roster management</p>
+</div>
+
+<div class="card">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Member</th>
+        <th>Role</th>
+        <th>Codes</th>
+        <th>Invites Sent</th>
+        <th>Joined</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each do |user| %>
+        <tr>
+          <td>
+            <div><%= link_to user.display_name, admin_user_path(user), style: "font-weight: 600;" %></div>
+            <div style="font-size: 12px; color: var(--lm-muted);"><%= user.email %></div>
+          </td>
+          <td><span class="badge <%= user.role_admin? ? 'badge-gold' : 'badge-gray' %>"><%= user.role.humanize %></span></td>
+          <td><%= user.referral_codes.active.count %> active</td>
+          <td><%= user.sent_invitations.count %></td>
+          <td style="font-size: 13px; color: var(--lm-muted);"><%= user.created_at.strftime("%b %-d, %Y") %></td>
+          <td>
+            <span class="badge <%= user.confirmed? ? 'badge-green' : 'badge-gray' %>">
+              <%= user.confirmed? ? "Confirmed" : "Unconfirmed" %>
+            </span>
+          </td>
+          <td style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <%= link_to "View", admin_user_path(user), class: "btn btn-sm btn-outline" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

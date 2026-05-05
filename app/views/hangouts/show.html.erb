@@ -1,0 +1,98 @@
+<% content_for :title, "#{@hangout.title} — LetsMeet" %>
+
+<div style="margin-bottom: 24px;">
+  <%= link_to "← Back to Hangouts", hangouts_path, class: "text-muted", style: "font-size: 14px;" %>
+</div>
+
+<% if @hangout.cover_image.attached? %>
+  <%= image_tag @hangout.cover_image.variant(resize_to_fill: [1200, 400]), style: "width: 100%; height: 320px; object-fit: cover; border-radius: var(--lm-radius); margin-bottom: 32px;" %>
+<% end %>
+
+<div class="flex justify-between items-center" style="margin-bottom: 32px;">
+  <div>
+    <div style="margin-bottom: 8px; display: flex; gap: 8px; flex-wrap: wrap;">
+      <span class="badge <%= @hangout.virtual? ? 'badge-blue' : @hangout.in_person? ? 'badge-green' : 'badge-gold' %>">
+        <%= @hangout.hangout_type.humanize %>
+      </span>
+      <span class="badge <%= @hangout.published? ? 'badge-green' : @hangout.cancelled? ? 'badge-red' : 'badge-gray' %>">
+        <%= @hangout.status.humanize %>
+      </span>
+      <% if @hangout.invite_only? %><span class="badge badge-gray">Invite Only</span><% end %>
+      <% if @hangout.full? %><span class="badge badge-red">Full</span><% end %>
+    </div>
+    <h1 style="font-size: 36px; font-weight: 800; color: var(--lm-light);"><%= @hangout.title %></h1>
+    <p class="text-muted" style="margin-top: 8px;">
+      Hosted by <strong style="color: var(--lm-light);"><%= @hangout.creator.display_name %></strong>
+      &bull; <%= @hangout.starts_at.strftime("%A, %B %-d, %Y at %-I:%M %p") %>
+    </p>
+  </div>
+
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-start;">
+    <% if policy(@hangout).rsvp? %>
+      <%= form_with url: rsvp_hangout_path(@hangout), method: :post, style: "display: inline;" do |f| %>
+        <%= f.hidden_field :rsvp_action, value: "accept" %>
+        <%= f.submit "RSVP — Accept", class: "btn btn-primary" %>
+      <% end %>
+      <%= form_with url: rsvp_hangout_path(@hangout), method: :post, style: "display: inline;" do |f| %>
+        <%= f.hidden_field :rsvp_action, value: "decline" %>
+        <%= f.submit "Decline", class: "btn btn-outline" %>
+      <% end %>
+    <% end %>
+    <% if policy(@hangout).edit? %>
+      <%= link_to "Edit", edit_hangout_path(@hangout), class: "btn btn-outline btn-sm" %>
+    <% end %>
+    <% if policy(@hangout).cancel? && @hangout.published? %>
+      <%= link_to "Cancel Hangout", cancel_hangout_path(@hangout), data: { turbo_method: :patch, confirm: "Cancel this hangout?" }, class: "btn btn-danger btn-sm" %>
+    <% end %>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div>
+    <div class="card" style="margin-bottom: 24px;">
+      <div class="card-title">About This Hangout</div>
+      <% if @hangout.description.present? %>
+        <p style="line-height: 1.8; color: var(--lm-light);"><%= simple_format(@hangout.description) %></p>
+      <% else %>
+        <p class="text-muted">No description provided.</p>
+      <% end %>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Details</div>
+      <table class="table">
+        <% if @hangout.location.present? %>
+          <tr><th>Location</th><td><%= @hangout.location %></td></tr>
+        <% end %>
+        <% if @hangout.meeting_url.present? %>
+          <tr><th>Join Link</th><td><%= link_to "Join Online", @hangout.meeting_url, target: "_blank" %></td></tr>
+        <% end %>
+        <% if @hangout.ends_at.present? %>
+          <tr><th>Ends</th><td><%= @hangout.ends_at.strftime("%-I:%M %p") %></td></tr>
+        <% end %>
+        <tr><th>Capacity</th><td><%= @hangout.max_attendees.present? ? "#{@hangout.max_attendees} max" : "Unlimited" %></td></tr>
+        <tr><th>Attending</th><td><%= @hangout.accepted_count %></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Attendees (<%= @participants.count %>)</div>
+    <% if @participants.any? %>
+      <% @participants.each do |p| %>
+        <div class="flex items-center gap-4" style="padding: 12px 0; border-bottom: 1px solid var(--lm-border);">
+          <% if p.user.profile&.avatar&.attached? %>
+            <%= image_tag p.user.profile.avatar.variant(resize_to_fill: [32, 32]), class: "avatar avatar-sm" %>
+          <% else %>
+            <div class="avatar avatar-sm avatar-placeholder" style="width: 32px; height: 32px; font-size: 13px;">
+              <%= p.user.display_name[0].upcase %>
+            </div>
+          <% end %>
+          <span style="font-size: 14px;"><%= p.user.display_name %></span>
+        </div>
+      <% end %>
+    <% else %>
+      <p class="text-muted">No confirmed attendees yet.</p>
+    <% end %>
+  </div>
+</div>

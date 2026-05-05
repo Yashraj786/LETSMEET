@@ -1,0 +1,85 @@
+<% content_for :title, "Admin Dashboard — LetsMeet" %>
+
+<div class="page-header">
+  <h1>Admin Dashboard</h1>
+  <p>Full network oversight</p>
+</div>
+
+<%# Platform Stats %>
+<div class="grid-4" style="margin-bottom: 40px;">
+  <div class="stat-card">
+    <div class="stat-number"><%= @stats[:total_users] %></div>
+    <div class="stat-label">Total Members</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number"><%= @stats[:confirmed_users] %></div>
+    <div class="stat-label">Confirmed</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number"><%= @stats[:total_hangouts] %></div>
+    <div class="stat-label">Hangouts</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number"><%= @stats[:upcoming_hangouts] %></div>
+    <div class="stat-label">Upcoming</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number"><%= @stats[:pending_invites] %></div>
+    <div class="stat-label">Pending Invites</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number"><%= @stats[:active_codes] %></div>
+    <div class="stat-label">Active Codes</div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <%# Recent Members %>
+  <div class="card">
+    <div class="card-title flex justify-between items-center">
+      <span>Recent Members</span>
+      <%= link_to "All Members →", admin_users_path, class: "btn btn-sm btn-outline" %>
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Joined</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @recent_users.each do |user| %>
+          <tr>
+            <td><%= link_to user.display_name, admin_user_path(user) %></td>
+            <td><span class="badge <%= user.role_admin? ? 'badge-gold' : 'badge-gray' %>"><%= user.role.humanize %></span></td>
+            <td style="color: var(--lm-muted); font-size: 13px;"><%= user.created_at.strftime("%b %-d") %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <%# Recent Invitations %>
+  <div class="card">
+    <div class="card-title">Recent Invitations</div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Recipient</th>
+          <th>Sender</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @recent_invitations.each do |inv| %>
+          <tr>
+            <td style="font-size: 13px;"><%= inv.recipient_email %></td>
+            <td style="font-size: 13px; color: var(--lm-muted);"><%= inv.sender.display_name %></td>
+            <td><span class="badge <%= inv.accepted? ? 'badge-green' : inv.revoked? ? 'badge-red' : 'badge-gold' %>"><%= inv.status.humanize %></span></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

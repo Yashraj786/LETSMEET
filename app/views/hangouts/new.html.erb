@@ -1,0 +1,88 @@
+<% content_for :title, "New Hangout — LetsMeet" %>
+
+<div style="max-width: 720px; margin: 0 auto;">
+  <div class="page-header">
+    <h1>Create Hangout</h1>
+    <p>Set the stage for an exclusive gathering</p>
+  </div>
+
+  <div class="card">
+    <%= form_with model: @hangout, url: hangouts_path do |f| %>
+      <% if @hangout.errors.any? %>
+        <div class="flash flash--error" style="margin-bottom: 24px;">
+          <strong><%= pluralize(@hangout.errors.count, "error") %>:</strong>
+          <ul style="margin-top: 8px; padding-left: 20px;">
+            <% @hangout.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="form-group">
+        <%= f.label :title, "Title", class: "form-label" %>
+        <%= f.text_field :title, class: "form-control", placeholder: "Name this gathering" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :description, "Description", class: "form-label" %>
+        <%= f.text_area :description, class: "form-control", rows: 5, placeholder: "What's this hangout about?" %>
+      </div>
+
+      <div class="grid-2" style="gap: 16px;">
+        <div class="form-group">
+          <%= f.label :hangout_type, "Type", class: "form-label" %>
+          <%= f.select :hangout_type, Hangout.hangout_types.keys.map { |t| [t.humanize, t] }, {}, class: "form-control" %>
+        </div>
+        <div class="form-group">
+          <%= f.label :status, "Status", class: "form-label" %>
+          <%= f.select :status, [["Draft (save privately)", "draft"], ["Published (visible to members)", "published"]], {}, class: "form-control" %>
+        </div>
+      </div>
+
+      <div class="grid-2" style="gap: 16px;">
+        <div class="form-group">
+          <%= f.label :starts_at, "Starts At", class: "form-label" %>
+          <%= f.datetime_local_field :starts_at, class: "form-control" %>
+        </div>
+        <div class="form-group">
+          <%= f.label :ends_at, "Ends At (optional)", class: "form-label" %>
+          <%= f.datetime_local_field :ends_at, class: "form-control" %>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :location, "Location (optional)", class: "form-label" %>
+        <%= f.text_field :location, class: "form-control", placeholder: "Physical address or venue name" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :meeting_url, "Online Meeting URL (optional)", class: "form-label" %>
+        <%= f.url_field :meeting_url, class: "form-control", placeholder: "https://..." %>
+      </div>
+
+      <div class="grid-2" style="gap: 16px;">
+        <div class="form-group">
+          <%= f.label :max_attendees, "Max Attendees (leave blank for unlimited)", class: "form-label" %>
+          <%= f.number_field :max_attendees, class: "form-control", min: 1, placeholder: "∞" %>
+        </div>
+        <div class="form-group" style="display: flex; flex-direction: column; justify-content: flex-end;">
+          <label class="form-label" style="margin-bottom: 12px;">
+            <%= f.check_box :invite_only, style: "margin-right: 8px;" %>
+            Invite Only Access
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :cover_image, "Cover Image (optional)", class: "form-label" %>
+        <%= f.file_field :cover_image, class: "form-control", accept: "image/jpeg,image/png,image/webp" %>
+      </div>
+
+      <div class="flex gap-4" style="margin-top: 32px;">
+        <%= f.submit "Create Hangout", class: "btn btn-primary" %>
+        <%= link_to "Cancel", hangouts_path, class: "btn btn-outline" %>
+      </div>
+    <% end %>
+  </div>
+</div>

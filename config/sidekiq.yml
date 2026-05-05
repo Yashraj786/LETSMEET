@@ -1,0 +1,10 @@
+---
+# Sidekiq queue configuration for the LetsMeet platform.
+# Queues are processed in priority order (highest weight first).
+# :mailers handles invitation and welcome emails — highest priority.
+# :default is the catch-all for non-time-critical background work.
+:queues:
+  - [mailers, 3]
+  - [default, 1]
+
+:max_retries: 5

@@ -1,0 +1,46 @@
+<% content_for :title, "LetsMeet — Exclusive Hangout Network" %>
+
+<section class="hero">
+  <div class="hero-title">LETSMEET</div>
+  <div class="hero-subtitle">Exclusive Hangout Network</div>
+  <p class="hero-tagline">
+    By invitation only. An elite network of exceptional people who value quality connections over quantity.
+  </p>
+
+  <div style="margin-top: 48px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+    <%= link_to "Request Access", new_user_registration_path, class: "btn btn-primary" %>
+    <%= link_to "Sign In", new_user_session_path, class: "btn btn-outline" %>
+  </div>
+</section>
+
+<section style="padding: 60px 32px; max-width: 1200px; margin: 0 auto;">
+  <div class="grid-3">
+    <div class="card text-center">
+      <div class="stat-number"><%= @stats[:members] %></div>
+      <div class="stat-label">Members</div>
+    </div>
+    <div class="card text-center">
+      <div class="stat-number"><%= @stats[:hangouts] %></div>
+      <div class="stat-label">Hangouts</div>
+    </div>
+    <div class="card text-center">
+      <div class="stat-number">Invite Only</div>
+      <div class="stat-label">Access Model</div>
+    </div>
+  </div>
+
+  <div class="grid-3" style="margin-top: 40px;">
+    <div class="card">
+      <div class="card-title">Curated Membership</div>
+      <p class="text-muted" style="line-height: 1.7; font-size: 15px;">Every member is personally vetted through an active member's referral chain. No exceptions.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Exclusive Hangouts</div>
+      <p class="text-muted" style="line-height: 1.7; font-size: 15px;">Create and attend high-calibre gatherings — both virtual and in-person — with people who match your standard.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Privacy First</div>
+      <p class="text-muted" style="line-height: 1.7; font-size: 15px;">Your profile and activity are visible only to fellow members. The public sees nothing.</p>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,128 @@
+<% content_for :title, "Dashboard — LetsMeet" %>
+
+<div class="page-header flex justify-between items-center">
+  <div>
+    <h1>Welcome back, <%= current_user.display_name %></h1>
+    <p>Your exclusive network at a glance</p>
+  </div>
+  <%= link_to "Create Hangout", new_hangout_path, class: "btn btn-primary" %>
+</div>
+
+<%# Quick stats %>
+<div class="grid-4" style="margin-bottom: 40px;">
+  <div class="stat-card">
+    <div class="stat-number"><%= current_user.hangout_participants.accepted.count %></div>
+    <div class="stat-label">Hangouts Attending</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number"><%= current_user.created_hangouts.count %></div>
+    <div class="stat-label">Hangouts Hosted</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number"><%= current_user.sent_invitations.accepted.count %></div>
+    <div class="stat-label">Members Invited</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number"><%= @referral_codes.count %></div>
+    <div class="stat-label">Active Referral Codes</div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <%# Upcoming Hangouts %>
+  <div class="card">
+    <div class="card-title flex justify-between items-center">
+      <span>Upcoming Hangouts</span>
+      <%= link_to "View All →", hangouts_path, class: "btn btn-sm btn-outline" %>
+    </div>
+    <% if @upcoming_hangouts.any? %>
+      <% @upcoming_hangouts.each do |hangout| %>
+        <div style="padding: 16px 0; border-bottom: 1px solid var(--lm-border);">
+          <div class="flex justify-between items-center">
+            <div>
+              <%= link_to hangout.title, hangout_path(hangout), style: "font-weight: 600; color: var(--lm-light);" %>
+              <div class="text-muted" style="font-size: 13px; margin-top: 4px;">
+                <%= hangout.starts_at.strftime("%b %-d, %Y at %-I:%M %p") %>
+                &bull; <%= hangout.hangout_type.humanize %>
+              </div>
+            </div>
+            <span class="badge badge-green">Open</span>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <p class="text-muted" style="padding: 16px 0;">No upcoming hangouts yet.</p>
+    <% end %>
+  </div>
+
+  <%# Referral Codes %>
+  <div class="card">
+    <div class="card-title flex justify-between items-center">
+      <span>Your Referral Codes</span>
+      <% if current_user.can_invite? %>
+        <%= link_to "Send Invite →", new_invitation_path, class: "btn btn-sm btn-primary" %>
+      <% end %>
+    </div>
+    <% if @referral_codes.any? %>
+      <% @referral_codes.each do |code| %>
+        <div style="padding: 16px 0; border-bottom: 1px solid var(--lm-border);">
+          <div class="flex justify-between items-center">
+            <code style="color: var(--lm-gold); font-size: 15px; font-weight: 600;"><%= code.token %></code>
+            <span class="text-muted" style="font-size: 13px;"><%= code.uses_count %>/<%= code.max_uses %> used</span>
+          </div>
+          <% if code.expires_at %>
+            <div class="text-muted" style="font-size: 12px; margin-top: 4px;">Expires <%= code.expires_at.strftime("%b %-d, %Y") %></div>
+          <% end %>
+        </div>
+      <% end %>
+    <% else %>
+      <p class="text-muted" style="padding: 16px 0;">No active referral codes. Contact an admin.</p>
+    <% end %>
+  </div>
+
+  <%# Pending Invitations Sent %>
+  <div class="card">
+    <div class="card-title flex justify-between items-center">
+      <span>Pending Invitations</span>
+      <%= link_to "All Invitations →", invitations_path, class: "btn btn-sm btn-outline" %>
+    </div>
+    <% if @pending_invitations.any? %>
+      <% @pending_invitations.each do |inv| %>
+        <div style="padding: 12px 0; border-bottom: 1px solid var(--lm-border);">
+          <div class="flex justify-between items-center">
+            <span style="font-size: 14px;"><%= inv.recipient_email %></span>
+            <span class="badge badge-gold">Pending</span>
+          </div>
+          <div class="text-muted" style="font-size: 12px; margin-top: 4px;">Expires <%= inv.expires_at.strftime("%b %-d") %></div>
+        </div>
+      <% end %>
+    <% else %>
+      <p class="text-muted" style="padding: 16px 0;">No pending invitations.</p>
+    <% end %>
+  </div>
+
+  <%# My Hangouts %>
+  <div class="card">
+    <div class="card-title">My Hosted Hangouts</div>
+    <% if @my_hangouts.any? %>
+      <% @my_hangouts.each do |hangout| %>
+        <div style="padding: 12px 0; border-bottom: 1px solid var(--lm-border);">
+          <div class="flex justify-between items-center">
+            <%= link_to hangout.title, hangout_path(hangout), style: "font-size: 14px; font-weight: 600; color: var(--lm-light);" %>
+            <span class="badge <%= hangout.published? ? 'badge-green' : hangout.cancelled? ? 'badge-red' : 'badge-gray' %>">
+              <%= hangout.status.humanize %>
+            </span>
+          </div>
+          <div class="text-muted" style="font-size: 12px; margin-top: 4px;">
+            <%= hangout.accepted_count %> attending
+            <% if hangout.max_attendees %>
+              / <%= hangout.max_attendees %> max
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <p class="text-muted" style="padding: 16px 0;">You haven't hosted any hangouts yet.</p>
+    <% end %>
+  </div>
+</div>
