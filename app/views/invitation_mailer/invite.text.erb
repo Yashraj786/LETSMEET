@@ -1,0 +1,14 @@
+LETSMEET — Exclusive Membership Network
+========================================
+
+You have been personally invited by <%= @sender.display_name %> to join LetsMeet.
+
+Your invitation is valid until <%= @expires_at.strftime("%B %-d, %Y") %>.
+
+Accept your invitation:
+<%= @sign_up_url %>
+
+This invitation is for <%= @invitation.recipient_email %> only and cannot be transferred.
+
+---
+LetsMeet · Exclusively Curated · Confidential

@@ -1,0 +1,17 @@
+<div style="display: flex; flex-direction: column; gap: 10px; font-size: 14px;">
+  <%- if controller_name != 'sessions' %>
+    <%= link_to "Already a member? Sign in", new_session_path(resource_name) %>
+  <% end %>
+
+  <%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
+    <%= link_to "Forgot your password?", new_password_path(resource_name), class: "text-muted" %>
+  <% end %>
+
+  <%- if devise_mapping.confirmable? && controller_name != 'confirmations' %>
+    <%= link_to "Resend confirmation email", new_confirmation_path(resource_name), class: "text-muted" %>
+  <% end %>
+
+  <%- if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != 'unlocks' %>
+    <%= link_to "Unlock your account", new_unlock_path(resource_name), class: "text-muted" %>
+  <% end %>
+</div>

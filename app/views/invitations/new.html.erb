@@ -1,0 +1,54 @@
+<% content_for :title, "Send Invitation — LetsMeet" %>
+
+<div style="max-width: 560px; margin: 0 auto;">
+  <div class="page-header">
+    <h1>Send an Invitation</h1>
+    <p>Extend membership to someone who meets the standard</p>
+  </div>
+
+  <div class="card">
+    <% unless current_user.can_invite? %>
+      <div class="flash flash--alert" style="margin-bottom: 20px;">
+        You have no available referral codes. Contact an admin to receive one.
+      </div>
+    <% end %>
+
+    <%= form_with model: Invitation.new, url: invitations_path do |f| %>
+      <% if @invitation.errors.any? %>
+        <div class="flash flash--error" style="margin-bottom: 24px;">
+          <ul style="padding-left: 20px;">
+            <% @invitation.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="form-group">
+        <%= f.label :recipient_email, "Prospect's Email Address", class: "form-label" %>
+        <%= f.email_field :recipient_email, class: "form-control", placeholder: "they@example.com", required: true %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :referral_code_id, "Referral Code to Use", class: "form-label" %>
+        <%= f.select :referral_code_id,
+              @referral_codes.map { |c| ["#{c.token} (#{c.uses_count}/#{c.max_uses} used)", c.id] },
+              { prompt: "Select a code..." },
+              class: "form-control" %>
+      </div>
+
+      <div style="background: rgba(201, 168, 76, 0.06); border: 1px solid var(--lm-border); border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+        <p style="font-size: 13px; color: var(--lm-muted); line-height: 1.6;">
+          Sending this invitation will consume one use from the selected referral code.
+          The invitation link expires in <strong style="color: var(--lm-light);">7 days</strong>.
+          The recipient must register with the email address you provide.
+        </p>
+      </div>
+
+      <div class="flex gap-4">
+        <%= f.submit "Send Invitation", class: "btn btn-primary", disabled: !current_user.can_invite? %>
+        <%= link_to "Cancel", invitations_path, class: "btn btn-outline" %>
+      </div>
+    <% end %>
+  </div>
+</div>

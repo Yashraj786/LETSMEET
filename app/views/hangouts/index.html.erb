@@ -1,0 +1,51 @@
+<% content_for :title, "Hangouts — LetsMeet" %>
+
+<div class="page-header flex justify-between items-center">
+  <div>
+    <h1>Hangouts</h1>
+    <p>Exclusive gatherings for the network</p>
+  </div>
+  <%= link_to "Create Hangout", new_hangout_path, class: "btn btn-primary" %>
+</div>
+
+<% if @hangouts.any? %>
+  <div class="grid-3">
+    <% @hangouts.each do |hangout| %>
+      <div class="hangout-card">
+        <% if hangout.cover_image.attached? %>
+          <%= image_tag hangout.cover_image.variant(resize_to_fill: [640, 360]), class: "hangout-card-cover" %>
+        <% else %>
+          <div class="hangout-card-cover" style="display: flex; align-items: center; justify-content: center; color: var(--lm-muted); font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">
+            <%= hangout.hangout_type.humanize %>
+          </div>
+        <% end %>
+        <div class="hangout-card-body">
+          <div class="flex justify-between items-center" style="margin-bottom: 8px;">
+            <span class="badge <%= hangout.virtual? ? 'badge-blue' : hangout.in_person? ? 'badge-green' : 'badge-gold' %>">
+              <%= hangout.hangout_type.humanize %>
+            </span>
+            <% if hangout.invite_only? %>
+              <span class="badge badge-gray">Invite Only</span>
+            <% end %>
+          </div>
+          <div class="hangout-card-title"><%= link_to hangout.title, hangout_path(hangout) %></div>
+          <div class="hangout-card-meta">
+            <%= hangout.starts_at.strftime("%b %-d, %Y &bull; %-I:%M %p").html_safe %>
+          </div>
+          <div class="hangout-card-meta" style="margin-top: 4px;">
+            By <%= hangout.creator.display_name %>
+            &bull; <%= hangout.accepted_count %> attending
+            <% if hangout.max_attendees %>
+              / <%= hangout.max_attendees %> max
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="card text-center" style="padding: 60px;">
+    <p class="text-muted" style="font-size: 18px;">No upcoming hangouts yet.</p>
+    <%= link_to "Be the first to host one", new_hangout_path, class: "btn btn-primary", style: "margin-top: 20px; display: inline-flex;" %>
+  </div>
+<% end %>

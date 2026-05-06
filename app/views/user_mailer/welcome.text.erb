@@ -1,0 +1,16 @@
+LETSMEET — Welcome
+==================
+
+Hello <%= @display_name %>,
+
+Your membership is confirmed. You now have access to an exclusive network of exceptional people.
+
+<% if @referral_code %>
+Your Referral Code: <%= @referral_code.token %>
+Use it to invite someone who meets the standard.
+<% end %>
+
+Enter LetsMeet: <%= @dashboard_url %>
+
+---
+LetsMeet · Exclusively Curated · Confidential

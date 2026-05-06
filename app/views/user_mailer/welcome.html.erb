@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    <style>
+      body { font-family: -apple-system, sans-serif; color: #1a1a2e; background: #f8f9fa; margin: 0; padding: 0; }
+      .container { max-width: 600px; margin: 40px auto; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+      .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 40px; text-align: center; }
+      .header h1 { color: #c9a84c; margin: 0; font-size: 28px; letter-spacing: 2px; }
+      .body { padding: 40px; }
+      .body p { font-size: 16px; line-height: 1.7; color: #4a5568; }
+      .cta { text-align: center; margin: 32px 0; }
+      .cta a { background: #c9a84c; color: #1a1a2e; text-decoration: none; padding: 14px 36px; border-radius: 8px; font-weight: 700; font-size: 16px; display: inline-block; }
+      .code-box { background: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; text-align: center; margin: 24px 0; }
+      .code-box p { margin: 0 0 8px; font-size: 13px; color: #718096; }
+      .code-box .token { font-size: 20px; font-weight: 700; color: #c9a84c; letter-spacing: 2px; }
+      .footer { background: #f8f9fa; padding: 24px 40px; text-align: center; border-top: 1px solid #e2e8f0; }
+      .footer p { font-size: 12px; color: #a0aec0; margin: 0; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Welcome to LetsMeet</h1>
+      </div>
+      <div class="body">
+        <p>Hello <strong><%= @display_name %></strong>,</p>
+        <p>Your membership is confirmed. You now have access to an exclusive network of exceptional people.</p>
+        <p>You've been granted your first referral code. Use it to invite someone who meets the standard.</p>
+        <% if @referral_code %>
+          <div class="code-box">
+            <p>Your Referral Code</p>
+            <div class="token"><%= @referral_code.token %></div>
+          </div>
+        <% end %>
+        <div class="cta">
+          <%= link_to "Enter LetsMeet", @dashboard_url %>
+        </div>
+      </div>
+      <div class="footer">
+        <p>LetsMeet &bull; Exclusively Curated &bull; Confidential</p>
+      </div>
+    </div>
+  </body>
+</html>

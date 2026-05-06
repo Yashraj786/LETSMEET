@@ -1,0 +1,34 @@
+<% content_for :title, "Resend Confirmation — LetsMeet" %>
+
+<div class="auth-container">
+  <div class="auth-logo">
+    <span>LETSMEET</span>
+  </div>
+
+  <div class="auth-card">
+    <div class="auth-title">Resend Confirmation</div>
+    <p class="text-muted" style="font-size: 14px; margin-bottom: 24px; line-height: 1.6;">
+      Enter your email address and we'll resend your confirmation instructions.
+    </p>
+
+    <%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+
+      <div class="form-group">
+        <%= f.label :email, "Email Address", class: "form-label" %>
+        <%= f.email_field :email,
+              autofocus: true,
+              autocomplete: "email",
+              class: "form-control",
+              value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email) %>
+      </div>
+
+      <div style="margin-top: 24px;">
+        <%= f.submit "Resend Confirmation", class: "btn btn-primary", style: "width: 100%; justify-content: center;" %>
+      </div>
+    <% end %>
+
+    <hr class="divider">
+    <%= render "devise/shared/links" %>
+  </div>
+</div>

@@ -1,0 +1,55 @@
+<% content_for :title, "Invitations — LetsMeet" %>
+
+<div class="page-header flex justify-between items-center">
+  <div>
+    <h1>Invitations</h1>
+    <p>Your invite pipeline</p>
+  </div>
+  <% if current_user.can_invite? %>
+    <%= link_to "Send Invite", new_invitation_path, class: "btn btn-primary" %>
+  <% end %>
+</div>
+
+<% if @invitations.any? %>
+  <div class="card">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Recipient</th>
+          <th>Status</th>
+          <th>Referral Code</th>
+          <th>Sent</th>
+          <th>Expires</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @invitations.each do |inv| %>
+          <tr>
+            <td><%= inv.recipient_email %></td>
+            <td>
+              <span class="badge <%= inv.accepted? ? 'badge-green' : inv.revoked? || inv.expired? ? 'badge-red' : 'badge-gold' %>">
+                <%= inv.status.humanize %>
+              </span>
+            </td>
+            <td><code style="color: var(--lm-gold); font-size: 13px;"><%= inv.referral_code.token %></code></td>
+            <td style="color: var(--lm-muted); font-size: 13px;"><%= inv.created_at.strftime("%b %-d, %Y") %></td>
+            <td style="color: var(--lm-muted); font-size: 13px;"><%= inv.expires_at.strftime("%b %-d, %Y") %></td>
+            <td>
+              <% if inv.pending? && policy(inv).revoke? %>
+                <%= link_to "Revoke", revoke_invitation_path(inv), data: { turbo_method: :patch, confirm: "Revoke this invitation?" }, class: "btn btn-danger btn-sm" %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="card text-center" style="padding: 60px;">
+    <p class="text-muted" style="font-size: 18px;">No invitations sent yet.</p>
+    <% if current_user.can_invite? %>
+      <%= link_to "Send your first invitation", new_invitation_path, class: "btn btn-primary", style: "margin-top: 20px; display: inline-flex;" %>
+    <% end %>
+  </div>
+<% end %>

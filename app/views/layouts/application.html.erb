@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title).presence || "LetsMeet — Exclusive Hangout Network" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="LetsMeet">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="bg-lm-dark text-lm-light min-h-screen">
+    <%# Top navigation — only shown to authenticated members %>
+    <% if user_signed_in? %>
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <%= link_to "LETSMEET", root_path, class: "brand-logo" %>
+        </div>
+        <div class="navbar-menu">
+          <%= link_to "Dashboard", dashboard_path, class: "nav-link" %>
+          <%= link_to "Hangouts", hangouts_path, class: "nav-link" %>
+          <%= link_to "Invite", new_invitation_path, class: "nav-link" if current_user.can_invite? %>
+          <%= link_to "My Profile", profile_path(current_user.profile), class: "nav-link" if current_user.profile %>
+          <% if current_user.role_admin? %>
+            <%= link_to "Admin", admin_root_path, class: "nav-link nav-link--admin" %>
+          <% end %>
+          <%= link_to "Settings", edit_user_registration_path, class: "nav-link" %>
+          <%= link_to "Sign Out", destroy_user_session_path, data: { turbo_method: :delete }, class: "nav-link nav-link--signout" %>
+        </div>
+      </nav>
+    <% end %>
+
+    <%# Flash messages %>
+    <div class="flash-container">
+      <% flash.each do |type, message| %>
+        <div class="flash flash--<%= type %>">
+          <%= message %>
+        </div>
+      <% end %>
+    </div>
+
+    <main class="main-content">
+      <%= yield %>
+    </main>
+
+    <footer class="site-footer">
+      <p>&copy; <%= Time.current.year %> LetsMeet &bull; Exclusive &bull; Confidential</p>
+    </footer>
+  </body>
+</html>
