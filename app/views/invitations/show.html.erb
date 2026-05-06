@@ -1,0 +1,65 @@
+<% content_for :title, "Invitation — LetsMeet" %>
+
+<div style="margin-bottom: 20px;">
+  <%= link_to "← Back to Invitations", invitations_path, class: "text-muted", style: "font-size: 14px;" %>
+</div>
+
+<div style="max-width: 680px; margin: 0 auto;">
+  <div class="page-header">
+    <h1>Invitation Details</h1>
+  </div>
+
+  <div class="card" style="margin-bottom: 24px;">
+    <div class="card-title">Invitation Info</div>
+    <table class="table">
+      <tr>
+        <th>Recipient</th>
+        <td><%= @invitation.recipient_email %></td>
+      </tr>
+      <tr>
+        <th>Status</th>
+        <td>
+          <span class="badge <%= @invitation.accepted? ? 'badge-green' : @invitation.revoked? || @invitation.expired? ? 'badge-red' : 'badge-gold' %>">
+            <%= @invitation.status.humanize %>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <th>Referral Code</th>
+        <td><code style="color: var(--lm-gold); font-size: 14px;"><%= @invitation.referral_code.token %></code></td>
+      </tr>
+      <tr>
+        <th>Sent</th>
+        <td><%= @invitation.created_at.strftime("%B %-d, %Y at %-I:%M %p") %></td>
+      </tr>
+      <tr>
+        <th>Expires</th>
+        <td>
+          <%= @invitation.expires_at.strftime("%B %-d, %Y at %-I:%M %p") %>
+          <% if @invitation.expired_by_time? && @invitation.pending? %>
+            <span class="badge badge-red" style="margin-left: 8px;">Expired</span>
+          <% end %>
+        </td>
+      </tr>
+      <% if @invitation.accepted? %>
+        <tr>
+          <th>Accepted</th>
+          <td><%= @invitation.accepted_at&.strftime("%B %-d, %Y at %-I:%M %p") %></td>
+        </tr>
+      <% end %>
+    </table>
+  </div>
+
+  <% if @invitation.pending? && policy(@invitation).revoke? %>
+    <div class="card" style="background: rgba(252, 129, 129, 0.05); border-color: rgba(252, 129, 129, 0.3);">
+      <div class="card-title" style="color: #fc8181;">Revoke Invitation</div>
+      <p class="text-muted" style="margin-bottom: 20px; font-size: 14px;">
+        Revoking this invitation will immediately invalidate the sign-up link sent to <%= @invitation.recipient_email %>.
+      </p>
+      <%= link_to "Revoke Invitation",
+            revoke_invitation_path(@invitation),
+            data: { turbo_method: :patch, confirm: "Revoke this invitation?" },
+            class: "btn btn-danger btn-sm" %>
+    </div>
+  <% end %>
+</div>

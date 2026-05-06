@@ -1,0 +1,45 @@
+<% content_for :title, "Edit #{@user.display_name} — Admin — LetsMeet" %>
+
+<div style="margin-bottom: 20px;">
+  <%= link_to "← Back to #{@user.display_name}", admin_user_path(@user), class: "text-muted", style: "font-size: 14px;" %>
+</div>
+
+<div style="max-width: 560px; margin: 0 auto;">
+  <div class="page-header">
+    <h1>Edit Member</h1>
+    <p><%= @user.email %></p>
+  </div>
+
+  <div class="card">
+    <%= form_with model: [:admin, @user], url: admin_user_path(@user), method: :patch do |f| %>
+      <% if @user.errors.any? %>
+        <div class="flash flash--error" style="margin-bottom: 24px;">
+          <strong><%= pluralize(@user.errors.count, "error") %>:</strong>
+          <ul style="margin-top: 8px; padding-left: 20px;">
+            <% @user.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="form-group">
+        <%= f.label :email, "Email Address", class: "form-label" %>
+        <%= f.email_field :email, class: "form-control", autocomplete: "off" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :role, "Role", class: "form-label" %>
+        <%= f.select :role,
+              User.roles.keys.map { |r| [r.humanize, r] },
+              {},
+              class: "form-control" %>
+      </div>
+
+      <div class="flex gap-4" style="margin-top: 32px;">
+        <%= f.submit "Save Changes", class: "btn btn-primary" %>
+        <%= link_to "Cancel", admin_user_path(@user), class: "btn btn-outline" %>
+      </div>
+    <% end %>
+  </div>
+</div>

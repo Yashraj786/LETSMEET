@@ -10,6 +10,7 @@
     <p class="text-muted"><%= @user.email %></p>
   </div>
   <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+    <%= link_to "Edit", edit_admin_user_path(@user), class: "btn btn-outline btn-sm" %>
     <% if @user.role_member? %>
       <%= link_to "Grant Admin", grant_admin_admin_user_path(@user), data: { turbo_method: :patch, confirm: "Make this user an admin?" }, class: "btn btn-primary btn-sm" %>
     <% else %>

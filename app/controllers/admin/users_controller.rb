@@ -5,7 +5,6 @@ module Admin
 
     def index
       @users = User.includes(:profile, :referral_codes).order(created_at: :desc)
-                   .page(params[:page])
     end
 
     def show
